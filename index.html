@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiseon Ka Hisaab</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #app {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+        }
+
+        #itemName,
+        #itemPrice {
+            width: 80%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        #addItem,
+        #clearAll {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #transactions {
+            text-align: left;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h2>Paiseon Ka Hisaab</h2>
+        <input type="text" id="itemName" placeholder="Enter item name">
+        <input type="number" id="itemPrice" placeholder="Enter item price">
+        <button id="addItem" onclick="addItem()">Add Item</button>
+        <button id="clearAll" onclick="clearAll()">Clear All</button>
+        <div id="transactions">
+            <h3>Transactions:</h3>
+            <ul id="transactionList"></ul>
+            <p>Total: $<span id="totalAmount">0</span></p>
+        </div>
+    </div>
+
+    <script>
+        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+        function addItem() {
+            const itemNameInput = document.getElementById('itemName');
+            const itemPriceInput = document.getElementById('itemPrice');
+
+            const itemName = itemNameInput.value.trim();
+            const itemPrice = parseFloat(itemPriceInput.value);
+
+            if (itemName === '' || isNaN(itemPrice)) {
+                alert('Please enter valid item details');
+                return;
+            }
+
+            transactions.push({ itemName, itemPrice });
+            updateTransactionList();
+            updateTotalAmount();
+            itemNameInput.value = '';
+            itemPriceInput.value = '';
+
+            // Save transactions to local storage
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+        }
+
+        function updateTransactionList() {
+            const transactionList = document.getElementById('transactionList');
+            transactionList.innerHTML = '';
+
+            for (let i = 0; i < transactions.length; i++) {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${transactions[i].itemName}: $${transactions[i].itemPrice}`;
+                transactionList.appendChild(listItem);
+            }
+        }
+
+        function updateTotalAmount() {
+            const totalAmountElement = document.getElementById('totalAmount');
+            const totalAmount = transactions.reduce((total, transaction) => total + transaction.itemPrice, 0);
+            totalAmountElement.textContent = totalAmount.toFixed(2);
+        }
+
+        function clearAll() {
+            transactions = [];
+            updateTransactionList();
+            updateTotalAmount();
+            localStorage.removeItem('transactions');
+        }
+
+        // Initial update on page load
+        updateTransactionList();
+        updateTotalAmount();
+    </script>
+</body>
+</html>
