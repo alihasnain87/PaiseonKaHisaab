@@ -21,7 +21,8 @@
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: 300px;
+            max-width: 400px;
+            margin: 0 auto;
             text-align: center;
         }
 
@@ -47,6 +48,11 @@
             text-align: left;
             margin-top: 20px;
         }
+
+        #transactionList li {
+            list-style-type: none;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -59,7 +65,7 @@
         <div id="transactions">
             <h3>Transactions:</h3>
             <ul id="transactionList"></ul>
-            <p>Total: $<span id="totalAmount">0</span></p>
+            <p>Total: Rs.<span id="totalAmount">0.00</span></p>
         </div>
     </div>
 
@@ -78,7 +84,7 @@
                 return;
             }
 
-            transactions.push({ itemName, itemPrice });
+            transactions.push({ itemName, itemPrice, date: new Date().toLocaleDateString() });
             updateTransactionList();
             updateTotalAmount();
             itemNameInput.value = '';
@@ -94,7 +100,7 @@
 
             for (let i = 0; i < transactions.length; i++) {
                 const listItem = document.createElement('li');
-                listItem.textContent = `${transactions[i].itemName}: $${transactions[i].itemPrice}`;
+                listItem.innerHTML = `<strong>${transactions[i].itemName}</strong>: Rs.${transactions[i].itemPrice.toFixed(2)} - ${transactions[i].date}`;
                 transactionList.appendChild(listItem);
             }
         }
